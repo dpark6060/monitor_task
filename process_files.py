@@ -6,13 +6,17 @@ import os
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
-
+import pathlib
+WORKDIR = pathlib.Path(__file__).parent.resolve()
 
 FILENAME="top_output.txt"
 DATE_FORMAT="%Y-%m-%d %H:%M:%S"
 filename=FILENAME
 TIMESTAMP_COL = "TIMESTAMP"
-WORKDIR = Path("/Users/davidparker/Documents/Flywheel/Clients/NACC/Scripts/Investigate_DAPM/outputs")
+WORKDIR = WORKDIR / "outputs"
+
+if not WORKDIR.exists():
+    WORKDIR.mkdir()
 
 def is_timestamp(test_str):
     try:
