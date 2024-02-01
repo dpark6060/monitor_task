@@ -6,9 +6,9 @@ OUTPUT_FILE=top_output2.txt
 while true
 do
 
-    echo "top -pid $PID -l 1|tail -n +$NSKIP >> $OUTPUT_FILE"
+    echo "top -pid $PID -l 1 -stats 'pid,command,cpu,mem,state' |tail -n +$NSKIP >> $OUTPUT_FILE"
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-    top -pid $PID -l 1 | tail -n +$NSKIP | sed "s/$/ $TIMESTAMP/" >> $OUTPUT_FILE
+    top -pid $PID -l 1 -stats "pid,command,cpu,mem,state"| tail -n +$NSKIP | sed "s/$/ $TIMESTAMP/" >> $OUTPUT_FILE
 
     if [ "$FIRST" = true ]; then
         NSKIP=$(( NSKIP+1 ))
