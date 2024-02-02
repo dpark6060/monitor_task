@@ -7,7 +7,7 @@
 PID=$1
 FIRST=true
 OUTPUT_FILE=top_output2.txt
-SYS=MAC
+SYS=LINUX
 if [ $SYS = "MAC" ]; then
   TOPCMD=(top -pid $PID -l 1 -stats 'pid,command,cpu,mem,state')
   TAILCMD=(tail -n +$NSKIP)
