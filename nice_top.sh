@@ -12,29 +12,22 @@ if [ $SYS = "MAC" ]; then
   TOPCMD=(top -pid $PID -l 1 -stats 'pid,command,cpu,mem,state')
   AWKCMD=(awk '{print $0}')
   NSKIP=12
-
 elif [ $SYS = "LINUX" ]; then
   TOPCMD=(top -p $PID -b -n 1)
   AWKCMD=(awk '{print $1,$12,$9,$10}')
   NSKIP=7
-
 fi
-
-TAILCMD(){
-    echo tail -n +$NSKIP
-    }
-
-SEDCMD() {
-  echo sed "s/$/ $TIMESTAMP/"
-}
 
 
 
 while true
 do
+    TAILCMD=(tail -n +$NSKIP)
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-    echo "${TOPCMD[@]}|TAILCMD|${AWKCMD[@]}|SEDCMD >> $OUTPUT_FILE"
-    "${TOPCMD[@]}"|`TAILCMD`|"${AWKCMD[@]}"|`SEDCMD` >> $OUTPUT_FILE
+    SEDCMD=(sed "s/$/ $TIMESTAMP/")
+
+    echo "${TOPCMD[@]}|${TAILCMD[@]}|${AWKCMD[@]}|${SEDCMD[@]} >> $OUTPUT_FILE"
+    "${TOPCMD[@]}"|"${TAILCMD[@]}"|"${AWKCMD[@]}"|"${SEDCMD[@]}" >> $OUTPUT_FILE
     if [ "$FIRST" = true ]; then
         NSKIP=$(( NSKIP+1 ))
         FIRST=false
@@ -50,8 +43,5 @@ top_output=$(top -n 1 -b)
 # Print the top output with an additional column for timestamp
 echo "$top_output | Timestamp"
 echo "$top_output | $timestamp"
-
-
-
 
 
