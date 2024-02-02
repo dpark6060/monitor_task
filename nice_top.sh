@@ -4,6 +4,8 @@
 # This is a command to see what things are running before you get the PID:
 # top -l 1| grep Python
 # Or replace Python with whatever command you want to run
+# Or for linux:
+# top -b -n 1 | grep python
 PID=$1
 FIRST=true
 OUTPUT_FILE=top_output2.txt
