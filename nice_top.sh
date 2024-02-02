@@ -1,20 +1,35 @@
 
+
+
+# This is a command to see what things are running before you get the PID:
+# top -l 1| grep Python
+# Or replace Python with whatever command you want to run
 PID=$1
 FIRST=true
 NSKIP=12
 OUTPUT_FILE=top_output2.txt
+SYS=MAC
+if [ $SYS = "MAC" ]; then
+  TOPCMD=(top -pid $PID -l 1 -stats 'pid,command,cpu,mem,state')
+  TAILCMD=(tail -n +$NSKIP)
+  AWKCMD=(awk '{print $0}')
+  SEDCMD=(sed "s/$/ $TIMESTAMP/")
+elif [ $SYS = "LINUX" ]; then
+  TOPCMD=(top -p $PID -b -n 1)
+  TAILCMD=(tail -n +8 )
+  AWKCMD=(awk '{print $1,$12,$9,$10}')
+  SEDCMD=(sed "s/$/ $TIMESTAMP/")
+fi
+
 while true
 do
-
-    echo "top -pid $PID -l 1 -stats 'pid,command,cpu,mem,state' |tail -n +$NSKIP >> $OUTPUT_FILE"
     TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
-    top -pid $PID -l 1 -stats "pid,command,cpu,mem,state"| tail -n +$NSKIP | sed "s/$/ $TIMESTAMP/" >> $OUTPUT_FILE
-
+    echo "${TOPCMD[@]}|${TAILCMD[@]}|${AWKCMD[@]}|${SEDCMD[@]} >> $OUTPUT_FILE"
+    "${TOPCMD[@]}"|"${TAILCMD[@]}"|"${AWKCMD[@]}"|"${SEDCMD[@]}" >> $OUTPUT_FILE
     if [ "$FIRST" = true ]; then
         NSKIP=$(( NSKIP+1 ))
         FIRST=false
     fi
-
     sleep 60
 done
 
@@ -26,3 +41,5 @@ top_output=$(top -n 1 -b)
 # Print the top output with an additional column for timestamp
 echo "$top_output | Timestamp"
 echo "$top_output | $timestamp"
+
+
