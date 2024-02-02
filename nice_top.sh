@@ -10,15 +10,14 @@ OUTPUT_FILE=top_output2.txt
 SYS=LINUX
 if [ $SYS = "MAC" ]; then
   TOPCMD=(top -pid $PID -l 1 -stats 'pid,command,cpu,mem,state')
+  NSKIP=12
   TAILCMD=(tail -n +$NSKIP)
   AWKCMD=(awk '{print $0}')
-  NSKIP=12
-
 elif [ $SYS = "LINUX" ]; then
   TOPCMD=(top -p $PID -b -n 1)
+  NSKIP=7
   TAILCMD=(tail -n +$NSKIP )
   AWKCMD=(awk '{print $1,$12,$9,$10}')
-  NSKIP=7
 
 
 fi
